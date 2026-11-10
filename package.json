@@ -1,0 +1,15 @@
+{
+  "name": "ai-trading-core-v0-6-4-production",
+  "version": "0.6.4",
+  "private": true,
+  "scripts": {
+    "dev": "【entity-next¦canonical_name=next】 dev -p 3000",
+    "build": "【entity-next¦canonical_name=next】 build",
+    "start": "【entity-next¦canonical_name=next】 start -p 3000"
+  },
+  "dependencies": {
+    "【entity-next¦canonical_name=next】": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
