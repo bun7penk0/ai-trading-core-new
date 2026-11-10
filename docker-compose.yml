@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  ai-core:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: always
+  ibkr-gateway:
+    image: ghcr.io/gnzsnz/ibkr-gateway:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - TWS_USERID=${IBKR_USER}
+      - TWS_PASSWORD=${IBKR_PASS}
+      - TRADING_MODE=paper
+    restart: always
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - ai-core
+    restart: always
