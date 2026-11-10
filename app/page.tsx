@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState, useMemo } from 'react';
 
 type Signal = { sym: string; market: 'SET'|'US'; score: number; action: 'BUY'|'HOLD'|'SELL'; price: number; strategy: string; reason: string; atr: number };
@@ -9,7 +9,7 @@ const INITIAL_SIGNALS: Signal[] = [
   { sym: 'AAPL', market: 'US', score: 77, action: 'BUY', price: 181.2, strategy: 'C-Pullback', reason: 'Pullback EMA20, RSI 45, FVG ไม่เจอ → 50% size', atr: 2.1 },
   { sym: 'CPALL', market: 'SET', score: 71, action: 'HOLD', price: 62.5, strategy: 'B-MeanRev (Blocked)', reason: 'RSI 28 แต่ Regime=TREND_UP → BLOCKED กันมีดหล่น', atr: 0.92 },
   { sym: 'SCB', market: 'SET', score: 58, action: 'HOLD', price: 108, strategy: 'B-MeanRev', reason: 'SIDEWAYS, RSI 29, BB Lower, รอ Engulfing', atr: 1.1 },
-  { sym: '【entity-DELTA¦canonical_name=DELTA】', market: 'SET', score: 92, action: 'BUY', price: 92.5, strategy: 'Sector Rotation', reason: 'Sector ETRON แข็งสุด + Trend + FVG', atr: 1.8 },
+  { sym: 'DELTA', market: 'SET', score: 92, action: 'BUY', price: 92.5, strategy: 'Sector Rotation', reason: 'Sector ETRON แข็งสุด + Trend + FVG', atr: 1.8 },
 ];
 
 export default function Home() {
@@ -30,7 +30,6 @@ export default function Home() {
     if (positions.length >= 5) { setLog('⛔ Rejected: Max Positions (5)'); return; }
     const idem = `${s.sym}_20241029_BUY_${s.price}`;
     if (positions.find(p => p.idem === idem)) { setLog(`⛔ Duplicate Blocked: ${idem}`); return; }
-    // Tick Size Guard
     const ticked = s.price < 10 ? Math.floor(s.price/0.05)*0.05 : s.price;
     const stop = +(ticked - 2*s.atr).toFixed(2);
     const riskPerUnit = ticked - stop;
@@ -49,7 +48,6 @@ export default function Home() {
     setLog('🛑 ปิดทุกออเดอร์แล้ว - Flat');
   };
 
-  // Equity Curve SVG
   const maxE = Math.max(...equity), minE = Math.min(...equity);
   const points = equity.map((v, i) => `${(i/(equity.length-1))*320},${60 - ((v-minE)/(maxE-minE))*50}`).join(' ');
 
@@ -63,9 +61,9 @@ export default function Home() {
       </div>
       <p>SET + US | SANDBOX | Risk 0.1% | {emergency ? '🛑 HALTED' : '🟢 LIVE'}</p>
 
-      {/* A: กราฟ Equity */}
       <div style={{ background: '#1a1a1a', padding: 14, borderRadius: 12, marginBottom: 12 }}>
-        <b>📈 Equity Curve (Backtest 3y PF 1.68 → Paper +1.58[STRIPPED 26 bytes]"100%" height="70" viewBox="0 0 320 70" style={{ marginTop: 8 }}>
+        <b>📈 Equity Curve (Backtest 3y PF 1.68 → Paper +1.58%)</b>
+        <svg width="100%" height="70" viewBox="0 0 320 70" style={{ marginTop: 8 }}>
           <polyline points={points} fill="none" stroke="#22c55e" strokeWidth="2" />
         </svg>
         <div style={{ fontSize: 12, color: '#aaa', display: 'flex', justifyContent: 'space-between' }}>
@@ -74,7 +72,6 @@ export default function Home() {
         <div style={{ fontSize: 12, marginTop: 6 }}>Max DD -3.1% ✅ | Win 52% | PF 1.45 | Trades 142</div>
       </div>
 
-      {/* Balance + Emergency */}
       <div style={{ background: emergency ? '#450a0a' : '#1a1a1a', padding: 14, borderRadius: 12, marginBottom: 12, border: emergency ? '2px solid #ef4444' : 'none' }}>
         <div>Balance: ฿{balance.toLocaleString()} | Positions: {positions.length}/5</div>
         <div>Broker: ✅ SANDBOX Connected (themobli-E)</div>
@@ -82,14 +79,12 @@ export default function Home() {
         {positions.length > 0 && <button onClick={closeAll} style={{ marginTop: 8, padding: '8px 16px', borderRadius: 8, background: '#f59e0b', border: 'none', fontWeight: 'bold' }}>ปิดทุก Position</button>}
       </div>
 
-      {/* C: Filter กลยุทธ์ */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
         {['ALL','A-Trend','B-MeanRev','C-Pullback','ICT','VWAP','Sector'].map(f => (
           <button key={f} onClick={() => setFilter(f as any)} style={{ padding: '6px 10px', borderRadius: 20, background: filter===f ? '#22c55e' : '#222', border: 'none', color: '#fff', fontSize: 12 }}>{f}</button>
         ))}
       </div>
 
-      {/* Signals */}
       <h2>📊 Signals ({filtered.length})</h2>
       {filtered.map(s => (
         <div key={s.sym} style={{ background: '#1a1a1a', padding: 12, borderRadius: 10, marginBottom: 8 }}>
@@ -102,7 +97,6 @@ export default function Home() {
         </div>
       ))}
 
-      {/* Positions */}
       {positions.length > 0 && (
         <>
           <h2>💼 Positions เปิดอยู่</h2>
@@ -114,7 +108,6 @@ export default function Home() {
         </>
       )}
 
-      {/* A: History */}
       <h2>📜 History ({history.length})</h2>
       {history.length === 0 ? <div style={{ fontSize: 13, color: '#888' }}>ยังไม่มีเทรด - กด BUY เพื่อเริ่ม</div> : history.slice(0, 5).map((h, i) => (
         <div key={i} style={{ background: '#111', padding: 10, borderRadius: 8, marginBottom: 6, fontSize: 13 }}>
